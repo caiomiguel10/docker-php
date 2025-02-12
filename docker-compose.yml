@@ -1,0 +1,47 @@
+# Define a versão do Docker Compose
+version: '3.8'
+
+# Define os serviços (containers) que serão criados
+services:
+
+  # Serviço PHP-FPM
+  php:
+    build: 
+      context: ./dockerfile  # Define o diretório onde o Dockerfile está localizado
+      dockerfile: Dockerfile  # Nome do arquivo Dockerfile dentro da pasta especificada
+    container_name: meu-php  # Nome do container, para facilitar a identificação e gerenciamento
+    volumes:
+      - ./www:/var/www/html  # Sincroniza a pasta local 'www' com '/var/www/html' dentro do container
+    depends_on:
+      - mysql  # Aguarda o container do MySQL ser iniciado antes de iniciar este container
+
+  # Serviço Nginx (servidor web)
+  nginx:
+    image: nginx:latest  # Usa a imagem mais recente do Nginx disponível no Docker Hub
+    container_name: meu-nginx  # Define um nome para o container do Nginx
+    ports:
+      - "8081:80"  # Mapeia a porta 80 do container para a porta 8081 no host (localhost:8081 acessará o site)
+    volumes:
+      - ./www:/var/www/html  # Sincroniza a pasta local 'www' com '/var/www/html' dentro do container do Nginx
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf  # Substitui a configuração padrão do Nginx pela nossa
+    depends_on:
+      - php  # Garante que o container PHP esteja rodando antes de iniciar o Nginx
+
+  # Serviço MySQL (banco de dados)
+  mysql:
+    image: mysql:8.0  # Usa a imagem do MySQL na versão 8.0
+    container_name: meu-mysql  # Define um nome para o container do MySQL
+    restart: always  # Garante que o container reinicie automaticamente caso pare por algum motivo
+    environment:
+      MYSQL_ROOT_PASSWORD: root  # Define a senha do usuário root do MySQL
+      MYSQL_DATABASE: meu_banco  # Cria automaticamente um banco de dados chamado 'meu_banco'
+      MYSQL_USER: user  # Cria um usuário chamado 'user'
+      MYSQL_PASSWORD: senha  # Define a senha do usuário 'user'
+    ports:
+      - "3306:3306"  # Mapeia a porta 3306 do container para a porta 3306 do host (para acesso ao banco)
+    volumes:
+      - ./dados_mysql:/var/lib/mysql  # Sincroniza os dados do MySQL para persistência mesmo após reinícios
+
+# Definição dos volumes persistentes
+volumes:
+  dados_mysql:  # Volume que armazena os dados do MySQL, impedindo perda de informações ao reiniciar o container

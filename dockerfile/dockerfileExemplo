@@ -1,0 +1,24 @@
+# Usa a imagem oficial do PHP na versão 8.4 com suporte a FastCGI Process Manager (FPM)
+# O PHP-FPM é necessário para trabalhar com o Nginx, pois o Nginx não processa PHP diretamente
+FROM php:8.4-fpm
+
+# Executa comandos dentro do container para atualizar os pacotes do sistema e instalar dependências necessárias
+RUN apt-get update && apt-get install -y \
+    # Instala a biblioteca para suporte ao cURL (necessário para requisições HTTP)
+    libcurl4-openssl-dev \
+    # Instala a biblioteca Oniguruma (usada pelo PHP para manipulação de strings, necessária para mbstring)
+    libonig-dev \
+    # Instala a biblioteca XML (necessária para o PHP lidar com arquivos XML)
+    libxml2-dev \
+    # Após instalar as dependências do sistema, instala extensões PHP diretamente via docker-php-ext-install
+    && docker-php-ext-install \
+        curl \         # Extensão do PHP para manipulação de requisições HTTP
+        mysqli \       # Extensão do PHP para conexão com bancos de dados MySQL
+        pdo_mysql \    # Extensão do PHP para conexão com MySQL usando PDO
+        mbstring \     # Extensão do PHP para suporte a multibyte strings (essencial para manipulação de caracteres especiais)
+        xml           # Extensão do PHP para manipulação de XML
+
+# Define o diretório de trabalho dentro do container
+# Isso significa que todos os comandos subsequentes e arquivos serão manipulados dentro de /var/www/html
+# O código-fonte da aplicação será montado nesse diretório através do volume no docker-compose
+WORKDIR /var/www/html

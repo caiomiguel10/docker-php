@@ -1,0 +1,17 @@
+# Usa a imagem oficial do PHP com Apache
+FROM php:8.4-fpm
+
+# Atualiza os pacotes e instala extensões necessárias
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    unzip \
+    zip \
+    libcurl4-openssl-dev \
+    libonig-dev \
+    libxml2-dev \
+    && docker-php-ext-install zip curl mysqli pdo_mysql mbstring xml
+
+    # Instala o Composer diretamente no container
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Define o diretório de trabalho
+WORKDIR /var/www/html
