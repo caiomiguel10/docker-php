@@ -17,6 +17,18 @@ composer create-project --prefer-dist laravel/laravel meu-projeto
 # composer
 composer install
 
+# fazer migrate
+php artisan migrate
+
+
+# dentro do container
+# permissão para a pasta storage caso dê erro 
+chmod 775 -R storage
+# permissão para a pasta vendor caso dê erro 
+chmod 775 -R vendor
+
+
+
 # altere o .env de acordo com as configurações do banco mysql dentro do docker-compose.yml
 # essas são padrão
       HOST: mysql
