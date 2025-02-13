@@ -1,9 +1,6 @@
 # Define a versão do Docker Compose
-version: '3.8'
-
 # Define os serviços (containers) que serão criados
 services:
-
   # Serviço PHP-FPM
   php:
     build: 
@@ -20,7 +17,7 @@ services:
     image: nginx:latest  # Usa a imagem mais recente do Nginx disponível no Docker Hub
     container_name: meu-nginx  # Define um nome para o container do Nginx
     ports:
-      - "8081:80"  # Mapeia a porta 80 do container para a porta 8081 no host (localhost:8081 acessará o site)
+      - "8082:80"  # Mapeia a porta 80 do container para a porta 8081 no host (localhost:8081 acessará o site)
     volumes:
       - ./www:/var/www/html  # Sincroniza a pasta local 'www' com '/var/www/html' dentro do container do Nginx
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf  # Substitui a configuração padrão do Nginx pela nossa
